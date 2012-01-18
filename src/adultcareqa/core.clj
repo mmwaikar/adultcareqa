@@ -8,9 +8,7 @@
                         (:values data)))
 
 (defn create-data-definitions []
-  (create-collection *data-definition-collection* (csv/data-definitions *data-definition-file*)))
+  (create-collection mongo/*data-definition-collection* (csv/data-definitions csv/*data-definition-file*)))
 
 (defn create-data [filename]
-  (let [data (csv/csv-data csv-file-name)
-        columns (first (:columns data))]
-    (create-collection *data-collection* data)))
+  (create-collection mongo/*data-collection* (mongo/typed-data (csv/data filename))))
