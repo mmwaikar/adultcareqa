@@ -10,5 +10,10 @@
 (defn create-data-definitions []
   (create-collection mongo/*data-definition-collection* (csv/data-definitions)))
 
-(defn create-data [filename]
-  (create-collection mongo/*data-collection* (csv/typed-data (csv/data filename))))
+(defn create-data
+  ([filename] (create-data filename false))
+  ([filename typed?]
+     (let [data (csv/data filename)]
+       (if typed?
+         (create-collection mongo/*data-collection* (csv/typed-data data))
+         (create-collection mongo/*data-collection* data)))))
