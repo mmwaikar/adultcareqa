@@ -1,8 +1,9 @@
 (ns adultcareqa.services
   (:use [compojure.core]
-        [adultcareqa.mongo :as mongo]
         [clojure.data.json :as json]
-        [ring.middleware.json-params])
+        [ring.middleware.json-params]
+        [adultcareqa.mongo :as mongo]
+        [adultcareqa.charts :as charts])
   (:require [compojure.route :as route]))
 
 (defn json-response [data & [status]]
@@ -19,15 +20,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defroutes app
+  ;; restful URLs for data
   (GET "/qa" []
        (json-response (mongo/memoized-get-data {:for-json true})))
   
   (GET "/qa/def" []
-       (json-response (mongo/memoized-get-data-definitions {:for-json true})))
+       (json-response (mongo/get-data-definitions-for-columns-in-data {:for-json true})))
   
   ;; (GET "/qa/period/:period" [period] (json-response (hash-map :returnVal (str "Hello " period))))
   (GET "/qa/period/:period" [period] (json-response (str "Hello " period)))
-  (GET "/qa/period/:period/column/:column" [period column] (str "Hello " period ", column: " column))
+  
+  (GET "/qa/period/:period/column/:column" [period column]
+       (json-response (mongo/get-filtered-data {:period period :column column})))
+
+  ;; restful URLs for charts
+  (GET "/qa/charts/period/:period/column/:column" [period column]
+       (json-response (charts/get-charts-map "Monthly RP_N1 Summary"
+                                             "Month"
+                                             "Resident Count"
+                                             (mongo/get-filtered-data {:period period :column column}))))
   
   (route/files "/" {:root "public"})
   (route/not-found "Page not found")) ;;(mongo/filter-by {:period period})))

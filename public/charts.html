@@ -8,38 +8,23 @@
   <body>
     <script src="js/knockout-2.0.0.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script type="text/javascript">
-       $(function() {
-	  $(document).ready(function() {
-					$.ajax({
-						   url: 'http://localhost:3000/qa/def',
-						   timeout: 5000,
-						   type: 'GET',
-						   dataType: 'json',
-						   success: function(data) {
-						       $.each(data, function(i, row) {
-                                                           if (i !== 0)
-                                                              $('#columns').append('<option>'+row.description+' - '+i+row.name+'</option>');
-						       });
-						   },
-						   error: function (xhr) {
-						       $('#returnJson').html('Error: ' + xhr.status + ' ' + xhr.statusText);
-						       alert('error');
-						   }
-					       });
-				    });
-      });
-    </script>
+    <script src="js/FusionCharts.js" type="text/javascript"></script>
+    <script src="js/charts.js" type="text/javascript"></script>
     <div id="wrap">
       <div id="header"><h1>Fusion charts for Adult Care QA</h1></div>
       <div id="nav">
-	<h4>Choose the columns for graphs</h4>
-	<select id="columns" multiple="yes" size="20">
+	<h4>Choose the columns for the graph</h4>
+	<select id="columnsSelect" multiple="yes" size="20">
 	</select>
+	<h4>Choose the year for the graph</h4>
+	<select id="yearSelect">
+	</select>
+	<p>
+	<button id="drawChartButton" type="button">Display Chart</button>
       </div>
       <div id="main">
 	<h4>Charts</h4>
-	<div id="chart">
+	<div id="chartContainer">
 
 	</div>
       </div>
