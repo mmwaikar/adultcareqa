@@ -35,9 +35,8 @@
 
   ;; restful URLs for charts
   (GET "/qa/charts/period/:period/column/:column" [period column]
-       (json-response (charts/get-charts-map "Monthly RP_N1 Summary"
+       (json-response (charts/get-charts-map column
                                              "Month"
-                                             "Resident Count"
                                              (mongo/get-filtered-data {:period period :column column}))))
   
   (route/files "/" {:root "public"})

@@ -73,6 +73,21 @@
      (let [common-columns (common-columns-in-data-and-definitions {:for-json for-json})]
        (filter #(contains? common-columns (:name %)) (memoized-get-data-definitions {:for-json for-json})))))
 
+(defn get-filtered-data
+  "Returns data filtered by column for a particular period."
+  [{period :period column :column
+    :or {period "" column ""}}]
+  (let [data (memoized-get-data)
+        for-period (filter #(> (.indexOf (:Date %) period) -1) data)
+        selected-columns-data (map #(select-keys % (vector (keyword column) :Date)) for-period)]
+    (map #(hash-map :Date (:Date %) :column {:name column :value ((keyword column) %)}) selected-columns-data)))
+
+(defn get-column-description [name]
+  (let [column (filter #(= (:name %) name) (memoized-get-data-definitions))]
+    (if (nil? column)
+      ""
+      (:description (first column)))))
+
 (defn mass-inserts
   "Does mass inserts of values in a collection-name collection.
    columns represents the various columns in collection-name."
@@ -82,13 +97,13 @@
                   (for [row values]
                     (zipmap columns row)))))
 
-(defn get-filtered-data
-  "Returns data filtered by column for a particular period."
-  [{period :period column :column
-    :or {period "" column ""}}]
-  (let [data (memoized-get-data)
-        for-period (filter #(> (.indexOf (:Date %) period) -1) data)]
-    (map #(select-keys % (vector (keyword column) :Date)) for-period)))
+;; (defn get-filtered-data
+;;   "Returns data filtered by column for a particular period."
+;;   [{period :period column :column
+;;     :or {period "" column ""}}]
+;;   (let [data (memoized-get-data)
+;;         for-period (filter #(> (.indexOf (:Date %) period) -1) data)]
+;;     (map #(select-keys % (vector (keyword column) :Date)) for-period)))
 
 ;; (defmacro filter-by [collection {period :period column :column
 ;;                              :or {period "" column ""}}]
